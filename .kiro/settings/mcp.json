@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "strands-agents": {
+      "command": "E:\\abin\\Codes\\devpost\\jums\\.venv\\Scripts\\python.exe",
+      "args": [
+        "-m",
+        "strands_mcp_server"
+      ],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "INFO"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "search_docs",
+        "fetch_doc"
+      ]
+    }
+  }
+}

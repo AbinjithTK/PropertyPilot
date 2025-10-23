@@ -1,0 +1,69 @@
+# AWS & Bedrock
+boto3>=1.34.0
+bedrock-agentcore>=1.0.0
+aws-lambda-powertools>=2.0.0
+
+# Strands Agents Framework
+strands-agents>=1.0.0
+
+# Web Framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Data Processing
+pandas>=2.1.0
+numpy>=1.24.0
+scipy>=1.11.0
+scikit-learn>=1.3.0
+
+# Web Scraping
+beautifulsoup4>=4.12.0
+selenium>=4.15.0
+requests>=2.31.0
+httpx>=0.25.0
+
+# Database
+psycopg2-binary>=2.9.0
+redis>=5.0.0
+sqlalchemy>=2.0.0
+alembic>=1.12.0
+
+# Geospatial
+geopy>=2.4.0
+googlemaps>=4.10.0
+
+# Financial Analysis
+yfinance>=0.2.0
+alpha-vantage>=2.3.0
+
+# Utilities
+python-dotenv>=1.0.0
+click>=8.1.0
+loguru>=0.7.0
+
+# Observability & AgentCore Optimization
+aws-opentelemetry-distro[otlp]>=0.10.1
+opentelemetry-instrumentation-fastapi>=0.41b0
+opentelemetry-instrumentation-boto3sqs>=0.41b0
+opentelemetry-instrumentation-requests>=0.41b0
+opentelemetry-instrumentation-psycopg2>=0.41b0
+prometheus-client>=0.17.0
+
+# AgentCore Runtime & Memory
+bedrock-agentcore>=1.0.0
+bedrock-agentcore[strands-agents]>=1.0.0
+nova-act>=1.0.0
+
+# Enhanced Web Research
+selenium>=4.15.0
+webdriver-manager>=4.0.0
+
+# Cognito Authentication
+PyJWT>=2.8.0
+python-jose[cryptography]>=3.3.0
+
+# Real Estate and Market Data APIs
+urllib3>=2.0.0
+requests>=2.31.0

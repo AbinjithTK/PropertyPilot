@@ -1,0 +1,293 @@
+# PropertyPilot - Technical Specification for Agent Builder
+
+## System Architecture
+
+**Platform**: AWS-based microservices architecture
+**Language**: Python 3.9+
+**Framework**: FastAPI with AWS Bedrock Agents
+**Orchestration**: AWS Step Functions
+**Communication**: HTTP REST APIs between services
+
+## Core Technology Stack
+
+### AI & ML Framework
+- **Primary AI**: AWS Bedrock Agents with Claude 3.5 Sonnet
+- **Secondary AI**: OpenAI GPT-4 for market analysis
+- **Agent Runtime**: AWS Bedrock Agent Runtime
+- **Model Selection**: Claude 3.5 Sonnet (primary), GPT-4 (fallback)
+
+### Backend Infrastructure
+- **API Framework**: FastAPI 0.104.0+
+- **AWS SDK**: boto3 1.34.0+
+- **Database**: 
+  - DynamoDB for property data and search indexes
+  - RDS PostgreSQL for financial calculations and portfolio tracking
+- **Storage**: S3 for property images, documents, and reports
+- **Caching**: ElastiCache Redis for frequent queries
+
+### Data Processing & Analysis
+- **Financial Analysis**: pandas, numpy for calculations
+- **Web Scraping**: 
+  - BeautifulSoup4 for static content
+  - Selenium for dynamic JavaScript content
+- **Geospatial**: 
+  - AWS Location Service for geocoding
+  - Google Maps API for property mapping
+  - geopy for distance calculations
+
+### External Integrations
+- **Property Data**: Zillow API, Realtor.com API, MLS feeds
+- **Market Data**: Census API, BLS API, Fred Economic Data
+- **Financial Data**: Yahoo Finance API, Alpha Vantage
+- **Image Analysis**: AWS Rekognition for property condition assessment
+
+## Service Definitions
+
+### 1. Property Scout Agent (Port 8081)
+```python
+# Technology Focus
+- Web scraping: BeautifulSoup4 + Selenium
+- Data storage: DynamoDB with GSI for search
+- API integration: Zillow, Realtor.com, MLS
+- Bedrock Agent: Property discovery and filtering
+- Real-time monitoring: CloudWatch Events + Lambda triggers
+```
+
+### 2. Market Analyzer Agent (Port 8082)
+```python
+# Technology Focus  
+- Data analysis: pandas, numpy, scikit-learn
+- External APIs: Census, BLS, Google Places
+- Bedrock Agent: Market trend analysis and predictions
+- Storage: RDS for time-series market data
+- Visualization: matplotlib, plotly for charts
+```
+
+### 3. Deal Evaluator Agent (Port 8083)
+```python
+# Technology Focus
+- Financial modeling: numpy, scipy for calculations
+- Image analysis: AWS Rekognition for property assessment
+- Bedrock Agent: ROI calculations and risk scoring
+- Database: RDS for financial models and scenarios
+- Reporting: jinja2 templates for deal summaries
+```
+
+### 4. Investment Manager Agent (Port 8084)
+```python
+# Technology Focus
+- Orchestration: AWS Step Functions for workflow
+- Portfolio tracking: RDS with complex queries
+- Notifications: AWS SNS for alerts
+- Bedrock Agent: Investment strategy and recommendations
+- Integration: Coordinates all other agents
+```
+
+### 5. Dashboard Service (Port 8000)
+```python
+# Technology Focus
+- Frontend: Next.js with TypeScript
+- Real-time updates: WebSocket connections
+- Maps: Google Maps JavaScript API
+- Charts: Chart.js, D3.js for visualizations
+- Authentication: AWS Cognito
+```
+
+## Required Dependencies
+
+### Core Python Packages
+```txt
+# AWS & Bedrock
+boto3>=1.34.0
+bedrock-agent-runtime>=1.0.0
+aws-lambda-powertools>=2.0.0
+
+# Web Framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Data Processing
+pandas>=2.1.0
+numpy>=1.24.0
+scipy>=1.11.0
+scikit-learn>=1.3.0
+
+# Web Scraping
+beautifulsoup4>=4.12.0
+selenium>=4.15.0
+requests>=2.31.0
+httpx>=0.25.0
+
+# Database
+psycopg2-binary>=2.9.0
+redis>=5.0.0
+sqlalchemy>=2.0.0
+alembic>=1.12.0
+
+# Geospatial
+geopy>=2.4.0
+googlemaps>=4.10.0
+
+# Financial Analysis
+yfinance>=0.2.0
+alpha-vantage>=2.3.0
+
+# Utilities
+python-dotenv>=1.0.0
+click>=8.1.0
+loguru>=0.7.0
+```
+
+## Environment Configuration Template
+
+```bash
+# AWS Configuration
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+BEDROCK_AGENT_REGION=us-east-1
+
+# Bedrock Agent IDs (to be created)
+PROPERTY_SCOUT_AGENT_ID=agent_id_here
+MARKET_ANALYZER_AGENT_ID=agent_id_here  
+DEAL_EVALUATOR_AGENT_ID=agent_id_here
+INVESTMENT_MANAGER_AGENT_ID=agent_id_here
+
+# Database Configuration
+DYNAMODB_TABLE_PREFIX=propertypilot
+RDS_HOST=your_rds_endpoint
+RDS_DATABASE=propertypilot
+RDS_USERNAME=your_username
+RDS_PASSWORD=your_password
+
+# External API Keys
+GOOGLE_MAPS_API_KEY=your_maps_key
+ZILLOW_API_KEY=your_zillow_key
+REALTOR_API_KEY=your_realtor_key
+CENSUS_API_KEY=your_census_key
+ALPHA_VANTAGE_API_KEY=your_av_key
+
+# Service URLs (for local development)
+PROPERTY_SCOUT_URL=http://localhost:8081
+MARKET_ANALYZER_URL=http://localhost:8082
+DEAL_EVALUATOR_URL=http://localhost:8083
+INVESTMENT_MANAGER_URL=http://localhost:8084
+DASHBOARD_URL=http://localhost:8000
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+
+# Application Settings
+LOG_LEVEL=INFO
+DEBUG=false
+MAX_CONCURRENT_SCRAPES=5
+PROPERTY_CACHE_TTL=3600
+```
+
+## Agent Builder Specifications
+
+### Property Scout Agent Prompt
+```
+Create a Bedrock Agent for property discovery with these capabilities:
+- Web scraping coordination for Zillow, Realtor.com, MLS
+- Property filtering based on investment criteria
+- Real-time listing monitoring and alerts
+- Data normalization and storage in DynamoDB
+- Integration with AWS Location Service for geocoding
+```
+
+### Market Analyzer Agent Prompt  
+```
+Create a Bedrock Agent for market analysis with these capabilities:
+- Demographic and economic data analysis
+- Comparable sales research and valuation
+- Neighborhood trend identification
+- School district and amenity scoring
+- Market timing recommendations
+```
+
+### Deal Evaluator Agent Prompt
+```
+Create a Bedrock Agent for financial analysis with these capabilities:
+- Cash flow and ROI calculations
+- Risk assessment and scoring
+- Repair cost estimation from images
+- Rental yield analysis
+- Investment recommendation generation
+```
+
+### Investment Manager Agent Prompt
+```
+Create a Bedrock Agent for portfolio management with these capabilities:
+- Multi-agent orchestration and coordination
+- Investment pipeline management
+- Performance tracking and reporting
+- Automated offer generation
+- Portfolio optimization recommendations
+```
+
+## Deployment Architecture
+agent core
+### Local Development
+```bash
+# Start all services locally
+make deploy_local
+
+# Individual service startup
+python -m property_scout --port 8081
+python -m market_analyzer --port 8082  
+python -m deal_evaluator --port 8083
+python -m investment_manager --port 8084
+python -m dashboard --port 8000
+```
+
+### AWS Production Deployment
+```bash
+# Deploy to AWS ECS/Fargate
+make deploy_aws
+
+# Alternative: AWS Lambda deployment
+make deploy_lambda
+```
+
+## Data Models
+
+### Property Data Structure
+```python
+{
+    "property_id": "uuid",
+    "address": "full_address",
+    "price": 250000,
+    "property_type": "single_family",
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "square_feet": 1500,
+    "lot_size": 0.25,
+    "year_built": 1995,
+    "listing_date": "2024-01-15",
+    "mls_number": "12345678",
+    "images": ["s3://bucket/image1.jpg"],
+    "description": "property_description",
+    "coordinates": {"lat": 40.7128, "lng": -74.0060}
+}
+```
+
+### Market Analysis Structure
+```python
+{
+    "analysis_id": "uuid", 
+    "property_id": "uuid",
+    "neighborhood_score": 8.5,
+    "price_trend": "increasing",
+    "comparable_sales": [{"address": "...", "price": 240000}],
+    "demographics": {"median_income": 65000},
+    "amenities": {"schools": 9, "transit": 7},
+    "market_conditions": "seller_market"
+}
+```
+
+This specification provides the complete technical foundation for building PropertyPilot agents using AWS Bedrock and the defined technology stack.
