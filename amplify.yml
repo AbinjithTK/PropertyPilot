@@ -1,0 +1,21 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "Setting up PropertyPilot Real Estate Investment Platform"
+        - echo "Build started on `date`"
+    build:
+      commands:
+        - echo "Building PropertyPilot website for real estate investors"
+        - echo "No build process needed for static HTML"
+    postBuild:
+      commands:
+        - echo "PropertyPilot website build completed successfully"
+        - echo "Ready to serve real estate investment analysis"
+  artifacts:
+    baseDirectory: /
+    files:
+      - '**/*'
+  cache:
+    paths: []

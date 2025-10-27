@@ -13,10 +13,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Install AWS OTEL Collector for enhanced observability
-RUN wget https://github.com/aws-observability/aws-otel-collector/releases/latest/download/aws-otel-collector_linux_arm64.deb \
-    && dpkg -i aws-otel-collector_linux_arm64.deb || true \
-    && rm aws-otel-collector_linux_arm64.deb
+# Skip AWS OTEL Collector installation for now (can be added later if needed)
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .

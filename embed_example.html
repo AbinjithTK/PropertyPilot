@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Website with PropertyPilot</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .property-pilot-widget {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            max-width: 600px;
+        }
+        .pp-input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; }
+        .pp-button { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; }
+        .pp-results { margin-top: 15px; padding: 15px; background: white; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🏠 My Real Estate Website</h1>
+    <p>Welcome to our real estate platform with AI-powered analysis!</p>
+    
+    <!-- Your existing website content -->
+    <div style="background: #e9ecef; padding: 20px; margin: 20px 0; border-radius: 5px;">
+        <h2>Featured Properties</h2>
+        <p>Browse our latest listings...</p>
+        <!-- Your property listings here -->
+    </div>
+    
+    <!-- PropertyPilot Widget -->
+    <div class="property-pilot-widget">
+        <h3>🤖 AI Investment Analysis</h3>
+        <p>Get instant AI-powered investment analysis for any location:</p>
+        
+        <input type="text" id="pp-location" class="pp-input" placeholder="Enter location (e.g., Austin, TX)" value="Austin, TX">
+        <input type="number" id="pp-price" class="pp-input" placeholder="Max price" value="500000">
+        <button class="pp-button" onclick="analyzeWithPropertyPilot()">Analyze Investment Potential</button>
+        
+        <div id="pp-results" class="pp-results" style="display: none;">
+            <h4>Analysis Results:</h4>
+            <div id="pp-content"></div>
+        </div>
+    </div>
+    
+    <!-- More website content -->
+    <div style="background: #e9ecef; padding: 20px; margin: 20px 0; border-radius: 5px;">
+        <h2>Market Insights</h2>
+        <p>Stay updated with market trends...</p>
+    </div>
+
+    <script>
+        async function analyzeWithPropertyPilot() {
+            const location = document.getElementById('pp-location').value;
+            const maxPrice = document.getElementById('pp-price').value;
+            const resultsDiv = document.getElementById('pp-results');
+            const contentDiv = document.getElementById('pp-content');
+            
+            if (!location) {
+                alert('Please enter a location');
+                return;
+            }
+            
+            // Show loading
+            resultsDiv.style.display = 'block';
+            contentDiv.innerHTML = '<p>🔄 Analyzing with PropertyPilot AI...</p>';
+            
+            try {
+                // Replace with your actual PropertyPilot endpoint
+                const endpoint = 'http://localhost:5000/invoke'; // Local testing
+                // const endpoint = 'https://your-agentcore-endpoint.amazonaws.com/invoke'; // Production
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        input: {
+                            prompt: `Analyze investment potential for ${location} under $${maxPrice}`,
+                            location: location,
+                            max_price: parseInt(maxPrice),
+                            type: 'enhanced_analysis'
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                displayResults(result);
+                
+            } catch (error) {
+                contentDiv.innerHTML = `<p style="color: red;">❌ Analysis failed: ${error.message}</p>`;
+                console.error('PropertyPilot error:', error);
+            }
+        }
+        
+        function displayResults(result) {
+            const contentDiv = document.getElementById('pp-content');
+            const output = result.output || result;
+            
+            let html = '<div style="background: #e8f5e8; padding: 15px; border-radius: 5px;">';
+            
+            if (output.message) {
+                html += `<p><strong>📋 ${output.message}</strong></p>`;
+            }
+            
+            if (output.analysis) {
+                html += '<h5>📊 Investment Analysis:</h5>';
+                if (typeof output.analysis === 'string') {
+                    html += `<p>${output.analysis}</p>`;
+                } else {
+                    html += `<pre style="background: #f8f9fa; padding: 10px; border-radius: 3px; font-size: 12px; overflow-x: auto;">${JSON.stringify(output.analysis, null, 2)}</pre>`;
+                }
+            }
+            
+            if (output.location && output.request_type) {
+                html += `<p><small>📍 Location: ${output.location} | Type: ${output.request_type}</small></p>`;
+            }
+            
+            html += '</div>';
+            contentDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

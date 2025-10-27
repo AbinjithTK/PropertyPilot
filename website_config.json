@@ -1,0 +1,12 @@
+{
+  "agentcore_endpoint": "https://bedrock-agentcore.us-east-1.amazonaws.com/runtimes/PropertyPilotGeminiEnhanced-A9pB9q790m/invoke",
+  "runtime_id": "PropertyPilotGeminiEnhanced-A9pB9q790m",
+  "region": "us-east-1",
+  "deployment_timestamp": "2025-10-27T18:23:32.489248",
+  "website_instructions": {
+    "step_1": "Copy the agentcore_endpoint URL below",
+    "step_2": "Open investor_dashboard.html in your browser",
+    "step_3": "Paste the endpoint URL in the configuration section",
+    "step_4": "Start analyzing real estate investments!"
+  }
+}

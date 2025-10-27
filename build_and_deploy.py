@@ -12,8 +12,14 @@ import time
 from datetime import datetime
 from dotenv import load_dotenv
 
-# Load environment variables
+# Load environment variables (but not AWS credentials - use AWS CLI instead)
 load_dotenv()
+
+# Remove AWS credentials from environment if they exist in .env
+# This ensures we use AWS CLI credentials instead
+for aws_key in ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN']:
+    if aws_key in os.environ:
+        del os.environ[aws_key]
 
 class PropertyPilotAgentCoreBuilder:
     """Enhanced builder for PropertyPilot with full AgentCore capabilities"""
@@ -26,7 +32,7 @@ class PropertyPilotAgentCoreBuilder:
         self.image_tag = "latest"
         self.image_uri = f"{self.ecr_base_uri}/{self.repo_name}:{self.image_tag}"
         
-        # Initialize AWS clients
+        # Initialize AWS clients (using default AWS CLI credentials)
         self.ecr_client = boto3.client('ecr', region_name=self.aws_region)
         self.bedrock_client = boto3.client('bedrock-agentcore-control', region_name=self.aws_region)
         self.iam_client = boto3.client('iam', region_name=self.aws_region)
@@ -41,10 +47,12 @@ class PropertyPilotAgentCoreBuilder:
     def get_aws_account_id(self):
         """Get AWS account ID"""
         try:
-            sts_client = boto3.client('sts')
+            # Use default AWS credentials (from AWS CLI) instead of .env
+            sts_client = boto3.client('sts', region_name=self.aws_region)
             return sts_client.get_caller_identity()['Account']
         except Exception as e:
             print(f"❌ Failed to get AWS account ID: {e}")
+            print("💡 Please run 'aws configure' to set up your AWS credentials")
             return "123456789012"
     
     def check_prerequisites(self):
@@ -85,13 +93,14 @@ class PropertyPilotAgentCoreBuilder:
         else:
             print("✅ Environment variables configured")
         
-        # Check AWS credentials
+        # Check AWS credentials (use default AWS CLI credentials)
         try:
-            sts_client = boto3.client('sts')
+            sts_client = boto3.client('sts', region_name=self.aws_region)
             identity = sts_client.get_caller_identity()
             print(f"✅ AWS Credentials: {identity['Arn']}")
         except Exception as e:
             print(f"❌ AWS credentials not configured: {e}")
+            print("💡 Please run 'aws configure' to set up your AWS credentials")
             return False
         
         return True
@@ -203,7 +212,7 @@ class PropertyPilotAgentCoreBuilder:
             username, password = base64.b64decode(token).decode().split(':')
             
             login_cmd = ['docker', 'login', '--username', username, '--password-stdin', endpoint]
-            login_process = subprocess.Popen(login_cmd, stdin=subprocess.PIPE, capture_output=True, text=True)
+            login_process = subprocess.Popen(login_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             login_result = login_process.communicate(input=password)
             
             if login_process.returncode != 0:
@@ -313,6 +322,15 @@ class PropertyPilotAgentCoreBuilder:
                     {
                         "Effect": "Allow",
                         "Action": [
+                            "ecr:GetAuthorizationToken",
+                            "ecr:BatchGetImage",
+                            "ecr:GetDownloadUrlForLayer"
+                        ],
+                        "Resource": "*"
+                    },
+                    {
+                        "Effect": "Allow",
+                        "Action": [
                             "cognito-idp:AdminGetUser",
                             "cognito-idp:AdminInitiateAuth",
                             "cognito-idp:AdminCreateUser",
@@ -356,7 +374,7 @@ class PropertyPilotAgentCoreBuilder:
         """Deploy to AgentCore with full capabilities"""
         print(f"\n🚀 Deploying to AgentCore...")
         
-        runtime_name = f"propertypilot-gemini-enhanced"
+        runtime_name = f"PropertyPilotGeminiEnhanced"
         
         # Load AgentCore configuration
         with open('agentcore_config.json', 'r') as f:
@@ -371,33 +389,22 @@ class PropertyPilotAgentCoreBuilder:
             'AGENTCORE_CONFIG': json.dumps(config)
         })
         
+        # Simplified runtime configuration based on actual API
         runtime_config = {
             'agentRuntimeName': runtime_name,
             'agentRuntimeArtifact': {
                 'containerConfiguration': {
-                    'containerUri': self.image_uri,
-                    'environmentVariables': env_vars
+                    'containerUri': self.image_uri
                 }
             },
             'roleArn': role_arn,
-            'runtimeConfiguration': {
-                'memorySize': config['agentcore']['runtime_configuration']['memory_size_mb'],
-                'timeout': config['agentcore']['runtime_configuration']['timeout_seconds'],
-                'concurrentExecutions': config['agentcore']['runtime_configuration']['concurrent_executions']
-            },
+            'environmentVariables': env_vars,
             'networkConfiguration': {
                 'networkMode': config['agentcore']['networking']['mode']
             }
         }
         
-        # Add observability configuration
-        if config['agentcore']['capabilities']['observability']['enabled']:
-            runtime_config['observabilityConfiguration'] = {
-                'enableCloudWatchLogs': config['agentcore']['capabilities']['observability']['cloudwatch_logs'],
-                'enableXRayTracing': config['agentcore']['capabilities']['observability']['xray_tracing'],
-                'enableCustomMetrics': config['agentcore']['capabilities']['observability']['custom_metrics'],
-                'logLevel': 'INFO'
-            }
+        # Skip observability configuration for now (may not be supported in this API version)
         
         try:
             response = self.bedrock_client.create_agent_runtime(**runtime_config)

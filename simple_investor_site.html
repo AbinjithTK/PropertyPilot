@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropertyPilot - Real Estate Investment Analysis</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .analyze-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .results h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-style: italic;
+        }
+        
+        .error {
+            background: #ffe6e6;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .success {
+            background: #e6f7e6;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+        
+        .config-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+        
+        .quick-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .example-card {
+            background: #f8f9ff;
+            border: 1px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .example-card:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .example-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .example-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .analysis-result {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .result-header {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .result-content {
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .metadata {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏠 PropertyPilot</div>
+            <div class="tagline">AI-Powered Real Estate Investment Analysis</div>
+        </div>
+        
+        <div class="form-section">
+            <div class="section-title">⚙️ Configuration</div>
+            <div class="config-note">
+                <strong>Setup Required:</strong> Enter your PropertyPilot AgentCore endpoint URL below. 
+                Get this from your AWS Bedrock AgentCore deployment.
+            </div>
+            
+            <div class="form-group">
+                <label for="endpoint">PropertyPilot AgentCore Endpoint URL:</label>
+                <input type="url" id="endpoint" 
+                       placeholder="https://bedrock-agentcore.us-west-2.amazonaws.com/runtimes/your-runtime-id/invoke">
+            </div>
+            
+            <div class="form-group">
+                <label for="authToken">Authentication Token (Optional):</label>
+                <input type="password" id="authToken" 
+                       placeholder="Bearer token for authenticated requests">
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <div class="section-title">🎯 Quick Examples</div>
+            <div class="quick-examples">
+                <div class="example-card" onclick="loadExample('austin')">
+                    <div class="example-title">Austin Investment</div>
+                    <div class="example-desc">Find rental properties under $500K</div>
+                </div>
+                <div class="example-card" onclick="loadExample('seattle')">
+                    <div class="example-title">Seattle Market</div>
+                    <div class="example-desc">Analyze market conditions</div>
+                </div>
+                <div class="example-card" onclick="loadExample('denver')">
+                    <div class="example-title">Denver Opportunities</div>
+                    <div class="example-desc">Find investment opportunities</div>
+                </div>
+                <div class="example-card" onclick="loadExample('miami')">
+                    <div class="example-title">Miami Analysis</div>
+                    <div class="example-desc">Comprehensive property analysis</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <div class="section-title">📊 Investment Analysis</div>
+            
+            <div class="form-group">
+                <label for="analysisType">Analysis Type:</label>
+                <select id="analysisType">
+                    <option value="enhanced_analysis">Enhanced Analysis (AI + Web Research)</option>
+                    <option value="property_analysis">Property Analysis (ROI Calculations)</option>
+                    <option value="market_research">Market Research (Market Conditions)</option>
+                    <option value="investment_opportunities">Investment Opportunities (Find Deals)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="query">Investment Query:</label>
+                <textarea id="query" rows="3" 
+                          placeholder="e.g., Find cash-flowing rental properties in Austin, TX under $500,000 with 8%+ ROI">Find investment properties in Austin, TX under $500,000</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" id="location" placeholder="e.g., Austin, TX" value="Austin, TX">
+            </div>
+            
+            <div class="form-group">
+                <label for="maxPrice">Maximum Price ($):</label>
+                <input type="number" id="maxPrice" placeholder="500000" value="500000" min="0" step="10000">
+            </div>
+            
+            <button class="analyze-btn" onclick="analyzeInvestment()">
+                🔍 Analyze Investment Opportunity
+            </button>
+        </div>
+        
+        <div id="results" class="results">
+            <h3>Analysis Results</h3>
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        function loadExample(type) {
+            const examples = {
+                austin: {
+                    query: "Find cash-flowing rental properties in Austin, TX under $500,000 with good ROI potential",
+                    location: "Austin, TX",
+                    maxPrice: 500000,
+                    analysisType: "enhanced_analysis"
+                },
+                seattle: {
+                    query: "Analyze current market conditions and investment potential in Seattle, WA",
+                    location: "Seattle, WA", 
+                    maxPrice: 800000,
+                    analysisType: "market_research"
+                },
+                denver: {
+                    query: "Find investment opportunities in Denver, CO for buy-and-hold strategy",
+                    location: "Denver, CO",
+                    maxPrice: 600000,
+                    analysisType: "investment_opportunities"
+                },
+                miami: {
+                    query: "Comprehensive analysis of Miami, FL real estate investment market",
+                    location: "Miami, FL",
+                    maxPrice: 750000,
+                    analysisType: "enhanced_analysis"
+                }
+            };
+            
+            const example = examples[type];
+            if (example) {
+                document.getElementById('query').value = example.query;
+                document.getElementById('location').value = example.location;
+                document.getElementById('maxPrice').value = example.maxPrice;
+                document.getElementById('analysisType').value = example.analysisType;
+            }
+        }
+        
+        async function analyzeInvestment() {
+            const endpoint = document.getElementById('endpoint').value;
+            const authToken = document.getElementById('authToken').value;
+            const query = document.getElementById('query').value;
+            const location = document.getElementById('location').value;
+            const maxPrice = parseInt(document.getElementById('maxPrice').value);
+            const analysisType = document.getElementById('analysisType').value;
+            
+            // Validation
+            if (!endpoint) {
+                showResults('Please configure your PropertyPilot AgentCore endpoint URL', 'error');
+                return;
+            }
+            
+            if (!query.trim()) {
+                showResults('Please enter your investment query', 'error');
+                return;
+            }
+            
+            // Start analysis
+            const btn = document.querySelector('.analyze-btn');
+            btn.disabled = true;
+            btn.textContent = '🔄 Analyzing with PropertyPilot AI...';
+            
+            showResults('PropertyPilot AI is analyzing your investment opportunity...', 'loading');
+            
+            try {
+                const payload = {
+                    input: {
+                        prompt: query,
+                        type: analysisType,
+                        location: location,
+                        max_price: maxPrice
+                    }
+                };
+                
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                if (authToken) {
+                    headers['Authorization'] = authToken.startsWith('Bearer ') ? authToken : `Bearer ${authToken}`;
+                }
+                
+                console.log('Sending request to PropertyPilot AgentCore:', payload);
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('PropertyPilot Response:', result);
+                
+                displayResults(result);
+                
+            } catch (error) {
+                console.error('Analysis error:', error);
+                showResults(`Analysis failed: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔍 Analyze Investment Opportunity';
+            }
+        }
+        
+        function showResults(message, type = 'success') {
+            const results = document.getElementById('results');
+            const content = document.getElementById('resultsContent');
+            
+            results.className = `results show ${type}`;
+            content.innerHTML = `<p>${message}</p>`;
+        }
+        
+        function displayResults(result) {
+            const output = result.output || result;
+            let html = '';
+            
+            // Main analysis message
+            if (output.message) {
+                html += `
+                    <div class="analysis-result">
+                        <div class="result-header">📋 Analysis Summary</div>
+                        <div class="result-content">${output.message}</div>
+                    </div>
+                `;
+            }
+            
+            // Enhanced analysis
+            if (output.enhanced_analysis) {
+                html += `
+                    <div class="analysis-result">
+                        <div class="result-header">🧠 Enhanced AI Analysis</div>
+                        <div class="result-content">${formatAnalysisData(output.enhanced_analysis)}</div>
+                    </div>
+                `;
+            }
+            
+            // Property analysis
+            if (output.analysis) {
+                html += `
+                    <div class="analysis-result">
+                        <div class="result-header">📊 Property Analysis</div>
+                        <div class="result-content">${formatAnalysisData(output.analysis)}</div>
+                    </div>
+                `;
+            }
+            
+            // Market data
+            if (output.market_data) {
+                html += `
+                    <div class="analysis-result">
+                        <div class="result-header">📈 Market Research</div>
+                        <div class="result-content">${formatAnalysisData(output.market_data)}</div>
+                    </div>
+                `;
+            }
+            
+            // Investment opportunities
+            if (output.opportunities) {
+                html += `
+                    <div class="analysis-result">
+                        <div class="result-header">💰 Investment Opportunities</div>
+                        <div class="result-content">${formatAnalysisData(output.opportunities)}</div>
+                    </div>
+                `;
+            }
+            
+            // Metadata
+            if (output.timestamp || output.session_id) {
+                html += `
+                    <div class="metadata">
+                        <strong>Analysis Details:</strong><br>
+                        ${output.timestamp ? `Time: ${new Date(output.timestamp).toLocaleString()}<br>` : ''}
+                        ${output.session_id ? `Session: ${output.session_id}<br>` : ''}
+                        ${output.location ? `Location: ${output.location}<br>` : ''}
+                        ${output.request_type ? `Type: ${output.request_type}<br>` : ''}
+                        ${output.memory_enabled ? 'Memory: Enabled<br>' : ''}
+                    </div>
+                `;
+            }
+            
+            showResults(html, 'success');
+        }
+        
+        function formatAnalysisData(data) {
+            if (typeof data === 'string') {
+                return data;
+            }
+            
+            if (typeof data === 'object') {
+                // Try to extract meaningful content
+                if (data.analysis_result) {
+                    return data.analysis_result;
+                }
+                
+                if (data.summary) {
+                    return `<strong>Summary:</strong> ${data.summary}`;
+                }
+                
+                // Fallback to formatted JSON
+                return `<pre style="background: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; font-size: 0.9rem;">${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            return String(data);
+        }
+        
+        // Auto-save endpoint
+        document.getElementById('endpoint').addEventListener('change', function() {
+            localStorage.setItem('propertypilot_endpoint', this.value);
+        });
+        
+        // Load saved endpoint
+        window.addEventListener('load', function() {
+            const savedEndpoint = localStorage.getItem('propertypilot_endpoint');
+            if (savedEndpoint) {
+                document.getElementById('endpoint').value = savedEndpoint;
+            }
+        });
+    </script>
+</body>
+</html>

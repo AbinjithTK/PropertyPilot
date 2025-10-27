@@ -1,0 +1,119 @@
+{
+  "timestamp": "2025-10-27T17:39:56.622272",
+  "runtime_arn": "arn:aws:bedrock-agentcore:us-east-1:476114109859:runtime/PropertyPilotGeminiEnhanced-A9pB9q790m",
+  "runtime_name": "PropertyPilotGeminiEnhanced",
+  "image_uri": "476114109859.dkr.ecr.us-east-1.amazonaws.com/propertypilot-gemini-agentcore:latest",
+  "role_arn": "arn:aws:iam::476114109859:role/PropertyPilotAgentCoreEnhancedRole",
+  "aws_region": "us-east-1",
+  "aws_account_id": "476114109859",
+  "status": "CREATING",
+  "capabilities": {
+    "built_in_tools": {
+      "enabled": true,
+      "tools": [
+        "zillow_property_search",
+        "market_analysis",
+        "roi_calculator",
+        "demographic_analyzer",
+        "risk_assessor",
+        "web_research"
+      ]
+    },
+    "gateways": {
+      "enabled": true,
+      "api_gateway": {
+        "rate_limiting": true,
+        "authentication": "cognito",
+        "cors_enabled": true
+      },
+      "websocket_gateway": {
+        "enabled": true,
+        "real_time_updates": true
+      }
+    },
+    "memory": {
+      "enabled": true,
+      "strategies": [
+        "summaryMemoryStrategy",
+        "userPreferenceMemoryStrategy",
+        "semanticMemoryStrategy"
+      ],
+      "namespaces": [
+        "/summaries/{actorId}/{sessionId}",
+        "/preferences/{actorId}",
+        "/facts/{actorId}",
+        "/properties/{actorId}",
+        "/market_data/{actorId}"
+      ],
+      "retention_policy": {
+        "summary_retention_days": 90,
+        "preference_retention_days": 365,
+        "fact_retention_days": 180
+      }
+    },
+    "observability": {
+      "enabled": true,
+      "cloudwatch_logs": true,
+      "xray_tracing": true,
+      "custom_metrics": true,
+      "prometheus_metrics": true,
+      "dashboards": {
+        "performance_dashboard": true,
+        "business_metrics_dashboard": true,
+        "error_tracking_dashboard": true
+      },
+      "alerts": {
+        "high_error_rate": {
+          "threshold": 5,
+          "period_minutes": 5
+        },
+        "high_latency": {
+          "threshold_ms": 10000,
+          "period_minutes": 5
+        },
+        "low_success_rate": {
+          "threshold_percent": 95,
+          "period_minutes": 10
+        }
+      }
+    },
+    "identity": {
+      "enabled": true,
+      "provider": "cognito",
+      "features": {
+        "user_pools": true,
+        "identity_pools": true,
+        "mfa": true,
+        "social_login": false,
+        "custom_attributes": [
+          "investment_preferences",
+          "risk_tolerance",
+          "investment_timeline",
+          "preferred_locations",
+          "max_budget"
+        ]
+      },
+      "session_management": {
+        "session_timeout_minutes": 45,
+        "max_sessions_per_user": 15,
+        "session_persistence": true
+      }
+    }
+  },
+  "model_configuration": {
+    "provider": "google_gemini",
+    "model_id": "gemini-2.5-pro",
+    "parameters": {
+      "temperature": 0.3,
+      "max_output_tokens": 4096,
+      "top_p": 0.9,
+      "top_k": 40
+    },
+    "features": {
+      "thinking_enabled": true,
+      "google_search_enabled": true,
+      "multimodal_support": true,
+      "structured_output": true
+    }
+  }
+}

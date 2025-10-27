@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropertyPilot - AI Real Estate Investment Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #555;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .analysis-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .results-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .analysis-types {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .analysis-card {
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .analysis-card:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .analysis-card.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .analysis-card i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .config-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .config-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 0.5rem;
+        }
+
+        .results-content {
+            min-height: 200px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            padding: 2rem;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .result-timestamp {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .error-message {
+            background: #ffe6e6;
+            border: 1px solid #ffb3b3;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .success-message {
+            background: #e6f7e6;
+            border: 1px solid #b3e6b3;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .analysis-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .property-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .property-card {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: box-shadow 0.3s;
+        }
+
+        .property-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .property-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .property-address {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .property-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .property-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .property-metric {
+            text-align: center;
+        }
+
+        .property-metric-value {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .property-metric-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .footer-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .analysis-types {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .main-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-home"></i> PropertyPilot
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link">Dashboard</a>
+                <a href="#" class="nav-link">Portfolio</a>
+                <a href="#" class="nav-link">Market Insights</a>
+                <a href="#" class="nav-link">Reports</a>
+            </div>
+            <div class="user-profile">
+                <i class="fas fa-user-circle" style="font-size: 1.5rem; color: #667eea;"></i>
+                <span>Investor</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="hero-section">
+            <h1 class="hero-title">AI-Powered Real Estate Investment Platform</h1>
+            <p class="hero-subtitle">Discover, analyze, and invest in profitable real estate opportunities with advanced AI insights</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="analysis-panel">
+                <h2 class="panel-title">
+                    <i class="fas fa-chart-line"></i>
+                    Investment Analysis
+                </h2>
+
+                <div class="config-section">
+                    <div class="config-title">AgentCore Configuration</div>
+                    <div class="form-group">
+                        <label class="form-label">PropertyPilot AgentCore Endpoint:</label>
+                        <input type="url" id="agentcoreEndpoint" class="form-input" 
+                               placeholder="https://your-agentcore-runtime.amazonaws.com/invoke"
+                               value="">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Authentication Token (Optional):</label>
+                        <input type="password" id="authToken" class="form-input" 
+                               placeholder="Bearer token for authenticated requests">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Analysis Type:</label>
+                    <div class="analysis-types">
+                        <div class="analysis-card selected" data-type="enhanced_analysis">
+                            <i class="fas fa-brain"></i>
+                            <strong>Enhanced Analysis</strong>
+                            <p>AI + Web Research</p>
+                        </div>
+                        <div class="analysis-card" data-type="market_research">
+                            <i class="fas fa-chart-area"></i>
+                            <strong>Market Research</strong>
+                            <p>Market Conditions</p>
+                        </div>
+                        <div class="analysis-card" data-type="property_analysis">
+                            <i class="fas fa-calculator"></i>
+                            <strong>Property Analysis</strong>
+                            <p>ROI Calculations</p>
+                        </div>
+                        <div class="analysis-card" data-type="investment_opportunities">
+                            <i class="fas fa-search-dollar"></i>
+                            <strong>Find Opportunities</strong>
+                            <p>Investment Leads</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Investment Query:</label>
+                    <textarea id="investmentQuery" class="form-input" rows="3" 
+                              placeholder="e.g., Find cash-flowing rental properties in Austin, TX under $500,000 with 8%+ ROI">Find investment properties in Austin, TX under $500,000 with good rental potential</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Target Location:</label>
+                    <input type="text" id="targetLocation" class="form-input" 
+                           placeholder="e.g., Austin, TX" value="Austin, TX">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Maximum Investment ($):</label>
+                    <input type="number" id="maxInvestment" class="form-input" 
+                           placeholder="500000" value="500000" min="0" step="10000">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Property Type:</label>
+                    <select id="propertyType" class="form-select">
+                        <option value="residential">Single Family Residential</option>
+                        <option value="multi-family">Multi-Family</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="condo">Condominium</option>
+                        <option value="townhouse">Townhouse</option>
+                        <option value="duplex">Duplex</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Investment Strategy:</label>
+                    <select id="investmentStrategy" class="form-select">
+                        <option value="buy_hold">Buy & Hold Rental</option>
+                        <option value="fix_flip">Fix & Flip</option>
+                        <option value="brrrr">BRRRR Strategy</option>
+                        <option value="wholesale">Wholesale</option>
+                        <option value="commercial">Commercial Investment</option>
+                    </select>
+                </div>
+
+                <button class="analyze-btn" id="analyzeBtn" onclick="analyzeInvestment()">
+                    <i class="fas fa-search"></i> Analyze Investment Opportunity
+                </button>
+            </div>
+
+            <div class="results-panel">
+                <h2 class="panel-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Analysis Results
+                </h2>
+                <div id="resultsContent" class="results-content">
+                    <div style="text-align: center; color: #666; padding: 2rem;">
+                        <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                        <p>Configure your PropertyPilot AgentCore endpoint above and run an analysis to see AI-powered investment insights here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h3>PropertyPilot - Professional Real Estate Investment Platform</h3>
+            <p>Powered by AWS Bedrock AgentCore • Google Gemini 2.5 Pro • Strands Agents Framework</p>
+            <p style="margin-top: 1rem; opacity: 0.8;">
+                <i class="fas fa-shield-alt"></i> Enterprise Security • 
+                <i class="fas fa-cloud"></i> Serverless Scaling • 
+                <i class="fas fa-brain"></i> Advanced AI Analysis
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let selectedAnalysisType = 'enhanced_analysis';
+        let analysisHistory = [];
+
+        // Handle analysis type selection
+        document.querySelectorAll('.analysis-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.analysis-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedAnalysisType = card.dataset.type;
+            });
+        });
+
+        async function analyzeInvestment() {
+            const endpoint = document.getElementById('agentcoreEndpoint').value;
+            const authToken = document.getElementById('authToken').value;
+            const query = document.getElementById('investmentQuery').value;
+            const location = document.getElementById('targetLocation').value;
+            const maxInvestment = parseInt(document.getElementById('maxInvestment').value);
+            const propertyType = document.getElementById('propertyType').value;
+            const strategy = document.getElementById('investmentStrategy').value;
+
+            // Validation
+            if (!endpoint) {
+                showError('Please configure your PropertyPilot AgentCore endpoint URL');
+                return;
+            }
+
+            if (!query.trim()) {
+                showError('Please enter your investment query');
+                return;
+            }
+
+            if (!location.trim()) {
+                showError('Please specify a target location');
+                return;
+            }
+
+            // Start analysis
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing with PropertyPilot AI...';
+
+            showLoading();
+
+            try {
+                const payload = {
+                    input: {
+                        prompt: query,
+                        type: selectedAnalysisType,
+                        location: location,
+                        max_price: maxInvestment,
+                        property_type: propertyType,
+                        investment_strategy: strategy,
+                        user_preferences: {
+                            strategy: strategy,
+                            max_investment: maxInvestment,
+                            preferred_locations: [location]
+                        }
+                    }
+                };
+
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+
+                if (authToken) {
+                    headers['Authorization'] = authToken.startsWith('Bearer ') ? authToken : `Bearer ${authToken}`;
+                }
+
+                console.log('Sending request to PropertyPilot AgentCore:', payload);
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`AgentCore Error ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('PropertyPilot AgentCore Response:', result);
+
+                // Store in history
+                analysisHistory.unshift({
+                    timestamp: new Date(),
+                    query: query,
+                    location: location,
+                    type: selectedAnalysisType,
+                    result: result
+                });
+
+                displayInvestmentResults(result);
+
+            } catch (error) {
+                console.error('PropertyPilot Analysis Error:', error);
+                showError(`Analysis failed: ${error.message}`);
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Investment Opportunity';
+            }
+        }
+
+        function showLoading() {
+            const resultsContent = document.getElementById('resultsContent');
+            resultsContent.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>PropertyPilot AI is analyzing your investment opportunity...</h3>
+                    <p>This may take 30-60 seconds for comprehensive analysis</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const resultsContent = document.getElementById('resultsContent');
+            resultsContent.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Analysis Error:</strong> ${message}
+                </div>
+            `;
+        }
+
+        function displayInvestmentResults(result) {
+            const output = result.output || result;
+            const resultsContent = document.getElementById('resultsContent');
+
+            let html = '';
+
+            // Analysis Summary
+            if (output.message) {
+                html += `
+                    <div class="analysis-summary">
+                        <h3><i class="fas fa-chart-line"></i> Investment Analysis Complete</h3>
+                        <p>${output.message}</p>
+                        <div style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">
+                            <i class="fas fa-clock"></i> ${new Date(output.timestamp).toLocaleString()}
+                            ${output.memory_enabled ? '<i class="fas fa-brain" style="margin-left: 1rem;"></i> Memory Enabled' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Key Metrics
+            if (output.analysis_metadata) {
+                html += `
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">${output.analysis_metadata.session_requests}</div>
+                            <div class="metric-label">Session Requests</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${output.analysis_metadata.properties_analyzed}</div>
+                            <div class="metric-label">Properties Analyzed</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${output.analysis_metadata.personalized ? 'Yes' : 'No'}</div>
+                            <div class="metric-label">Personalized</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Enhanced Analysis Results
+            if (output.enhanced_analysis) {
+                html += `<div class="result-card">`;
+                html += `<h4><i class="fas fa-brain"></i> Enhanced AI Analysis</h4>`;
+                html += formatAnalysisData(output.enhanced_analysis);
+                html += `</div>`;
+            }
+
+            // Property Analysis
+            if (output.analysis) {
+                html += `<div class="result-card">`;
+                html += `<h4><i class="fas fa-calculator"></i> Property Investment Analysis</h4>`;
+                html += formatAnalysisData(output.analysis);
+                html += `</div>`;
+            }
+
+            // Market Data
+            if (output.market_data) {
+                html += `<div class="result-card">`;
+                html += `<h4><i class="fas fa-chart-area"></i> Market Research</h4>`;
+                html += formatMarketData(output.market_data);
+                html += `</div>`;
+            }
+
+            // Investment Opportunities
+            if (output.opportunities) {
+                html += `<div class="result-card">`;
+                html += `<h4><i class="fas fa-search-dollar"></i> Investment Opportunities</h4>`;
+                html += formatOpportunities(output.opportunities);
+                html += `</div>`;
+            }
+
+            // Session Context
+            if (output.session_context) {
+                html += `<div class="result-card">`;
+                html += `<h4><i class="fas fa-history"></i> Session Context</h4>`;
+                html += `<div class="metrics-grid">`;
+                if (output.session_context.total_analyses) {
+                    html += `
+                        <div class="metric-card">
+                            <div class="metric-value">${output.session_context.total_analyses}</div>
+                            <div class="metric-label">Total Analyses</div>
+                        </div>
+                    `;
+                }
+                if (output.session_context.enhanced_analyses) {
+                    html += `
+                        <div class="metric-card">
+                            <div class="metric-value">${output.session_context.enhanced_analyses}</div>
+                            <div class="metric-label">Enhanced Analyses</div>
+                        </div>
+                    `;
+                }
+                if (output.session_context.unique_locations) {
+                    html += `
+                        <div class="metric-card">
+                            <div class="metric-value">${output.session_context.unique_locations}</div>
+                            <div class="metric-label">Unique Locations</div>
+                        </div>
+                    `;
+                }
+                html += `</div></div>`;
+            }
+
+            resultsContent.innerHTML = html;
+        }
+
+        function formatAnalysisData(data) {
+            if (typeof data === 'string') {
+                return `<div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">${data}</div>`;
+            }
+
+            if (typeof data === 'object') {
+                // Try to extract meaningful information
+                let html = '';
+                
+                if (data.analysis_result) {
+                    html += `<div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">${data.analysis_result}</div>`;
+                }
+                
+                if (data.properties && Array.isArray(data.properties)) {
+                    html += formatPropertyList(data.properties);
+                }
+                
+                if (data.summary) {
+                    html += `<div style="background: #e8f5e8; padding: 1rem; border-radius: 8px; margin: 1rem 0;"><strong>Summary:</strong> ${data.summary}</div>`;
+                }
+                
+                // Fallback to JSON display
+                if (!html) {
+                    html = `<details style="margin: 1rem 0;"><summary>View Raw Data</summary><pre style="background: #f8f9fa; padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.9rem;">${JSON.stringify(data, null, 2)}</pre></details>`;
+                }
+                
+                return html;
+            }
+
+            return `<p>${String(data)}</p>`;
+        }
+
+        function formatMarketData(data) {
+            let html = '';
+            
+            if (data.summary) {
+                html += `<div style="background: #e3f2fd; padding: 1rem; border-radius: 8px; margin: 1rem 0;">`;
+                html += `<strong>Market Summary:</strong><br>`;
+                if (data.summary.market_overview) {
+                    html += `Market Temperature: ${data.summary.market_overview.temperature || 'Unknown'}<br>`;
+                }
+                if (data.summary.price_analysis) {
+                    html += `Median Price: $${data.summary.price_analysis.median_price_estimate?.toLocaleString() || 'N/A'}<br>`;
+                }
+                html += `</div>`;
+            }
+            
+            if (data.confidence_score) {
+                html += `<div class="metric-card" style="margin: 1rem 0;"><div class="metric-value">${(data.confidence_score * 100).toFixed(1)}%</div><div class="metric-label">Data Confidence</div></div>`;
+            }
+            
+            return html || formatAnalysisData(data);
+        }
+
+        function formatOpportunities(data) {
+            let html = '';
+            
+            if (data.opportunities && Array.isArray(data.opportunities)) {
+                html += `<div class="property-list">`;
+                data.opportunities.forEach((opp, index) => {
+                    html += `
+                        <div class="property-card">
+                            <div class="property-header">
+                                <div class="property-address">Opportunity #${index + 1}</div>
+                            </div>
+                            <p>${opp.description || JSON.stringify(opp)}</p>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            
+            return html || formatAnalysisData(data);
+        }
+
+        function formatPropertyList(properties) {
+            let html = `<div class="property-list">`;
+            
+            properties.forEach(property => {
+                html += `
+                    <div class="property-card">
+                        <div class="property-header">
+                            <div class="property-address">${property.address || 'Property Address'}</div>
+                            <div class="property-price">$${property.price?.toLocaleString() || 'N/A'}</div>
+                        </div>
+                        <div class="property-metrics">
+                            <div class="property-metric">
+                                <div class="property-metric-value">${property.roi || 'N/A'}</div>
+                                <div class="property-metric-label">ROI</div>
+                            </div>
+                            <div class="property-metric">
+                                <div class="property-metric-value">${property.rental_yield || 'N/A'}</div>
+                                <div class="property-metric-label">Rental Yield</div>
+                            </div>
+                            <div class="property-metric">
+                                <div class="property-metric-value">${property.cash_flow || 'N/A'}</div>
+                                <div class="property-metric-label">Cash Flow</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            return html;
+        }
+
+        // Auto-save endpoint configuration
+        document.getElementById('agentcoreEndpoint').addEventListener('change', function() {
+            localStorage.setItem('propertypilot_endpoint', this.value);
+        });
+
+        // Load saved endpoint
+        window.addEventListener('load', function() {
+            const savedEndpoint = localStorage.getItem('propertypilot_endpoint');
+            if (savedEndpoint) {
+                document.getElementById('agentcoreEndpoint').value = savedEndpoint;
+            }
+        });
+    </script>
+</body>
+</html>
