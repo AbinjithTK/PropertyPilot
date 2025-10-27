@@ -1,5 +1,5 @@
-# PropertyPilot Enhanced AgentCore Service - ARM64 Dockerfile
-# Optimized for AWS Bedrock AgentCore with full observability and session management
+# PropertyPilot Enhanced AgentCore Service with Google Gemini
+# Optimized for AWS Bedrock AgentCore with full observability, memory, identity, and tools
 FROM --platform=linux/arm64 python:3.11-slim-bookworm
 
 WORKDIR /app
@@ -22,23 +22,31 @@ RUN wget https://github.com/aws-observability/aws-otel-collector/releases/latest
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install additional AgentCore optimizations
+# Install additional AgentCore optimizations and Gemini support
 RUN pip install --no-cache-dir \
     aws-opentelemetry-distro[otlp] \
     opentelemetry-instrumentation-fastapi \
     opentelemetry-instrumentation-boto3sqs \
     opentelemetry-instrumentation-requests \
-    prometheus-client
+    prometheus-client \
+    'strands-agents[gemini]' \
+    google-genai \
+    bedrock-agentcore \
+    nova-act
 
 # Copy application code
 COPY property_pilot_agents.py .
 COPY bedrock_deployment.py .
 COPY agentcore_deployment.py .
+COPY automated_web_research.py .
 COPY main.py .
+COPY .env .
 
 # Set environment variables for AgentCore optimization
 ENV PYTHONPATH=/app
-ENV AWS_DEFAULT_REGION=us-east-1
+ENV AWS_DEFAULT_REGION=us-west-2
+ENV MODEL_PROVIDER=gemini
+ENV GEMINI_MODEL_ID=gemini-2.5-pro
 
 # OpenTelemetry configuration for enhanced observability
 ENV OTEL_SERVICE_NAME=propertypilot-main

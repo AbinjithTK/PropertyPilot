@@ -8,12 +8,18 @@ import sys
 import asyncio
 import json
 from datetime import datetime
+from dotenv import load_dotenv
 
-# Set environment variables for testing
-# No Census API key needed anymore
-os.environ['HASDATA_API_KEY'] = '2e36da63-82a5-488b-ba4a-f93c79800e53'
-os.environ['AWS_REGION'] = 'us-east-1'
-os.environ['LOG_LEVEL'] = 'INFO'
+# Load environment variables from .env file first
+load_dotenv()
+
+# Set additional environment variables for testing (only if not already set)
+if not os.getenv('HASDATA_API_KEY'):
+    os.environ['HASDATA_API_KEY'] = '2e36da63-82a5-488b-ba4a-f93c79800e53'
+if not os.getenv('AWS_REGION'):
+    os.environ['AWS_REGION'] = 'us-west-2'
+if not os.getenv('LOG_LEVEL'):
+    os.environ['LOG_LEVEL'] = 'INFO'
 
 # Import PropertyPilot components
 try:
@@ -104,32 +110,72 @@ async def test_agent_system():
         scout_prompt = "Find investment properties in Austin, TX under $400,000. Focus on properties with good rental potential."
         scout_result = property_pilot.property_scout(scout_prompt)
         print(f"✅ Property Scout Agent responded")
-        print(f"   Response length: {len(scout_result.message)} characters")
-        print(f"   Sample response: {scout_result.message[:200]}...")
+        
+        # Handle different response types
+        if hasattr(scout_result, 'message'):
+            response_text = str(scout_result.message)
+        else:
+            response_text = str(scout_result)
+            
+        print(f"   Response length: {len(response_text)} characters")
+        if len(response_text) > 200:
+            print(f"   Sample response: {response_text[:200]}...")
+        else:
+            print(f"   Full response: {response_text}")
         
         # Test Market Analyzer Agent
         print("\n2. Testing Market Analyzer Agent...")
         market_prompt = "Analyze the real estate market in Austin, TX. Provide demographic data, neighborhood scores, and market trends."
         market_result = property_pilot.market_analyzer(market_prompt)
         print(f"✅ Market Analyzer Agent responded")
-        print(f"   Response length: {len(market_result.message)} characters")
-        print(f"   Sample response: {market_result.message[:200]}...")
+        
+        # Handle different response types
+        if hasattr(market_result, 'message'):
+            response_text = str(market_result.message)
+        else:
+            response_text = str(market_result)
+            
+        print(f"   Response length: {len(response_text)} characters")
+        if len(response_text) > 200:
+            print(f"   Sample response: {response_text[:200]}...")
+        else:
+            print(f"   Full response: {response_text}")
         
         # Test Deal Evaluator Agent
         print("\n3. Testing Deal Evaluator Agent...")
         deal_prompt = "Evaluate a $350,000 property with potential $2,800 monthly rent and estimated $800 monthly expenses. Calculate ROI and investment metrics."
         deal_result = property_pilot.deal_evaluator(deal_prompt)
         print(f"✅ Deal Evaluator Agent responded")
-        print(f"   Response length: {len(deal_result.message)} characters")
-        print(f"   Sample response: {deal_result.message[:200]}...")
+        
+        # Handle different response types
+        if hasattr(deal_result, 'message'):
+            response_text = str(deal_result.message)
+        else:
+            response_text = str(deal_result)
+            
+        print(f"   Response length: {len(response_text)} characters")
+        if len(response_text) > 200:
+            print(f"   Sample response: {response_text[:200]}...")
+        else:
+            print(f"   Full response: {response_text}")
         
         # Test Investment Manager Agent
         print("\n4. Testing Investment Manager Agent...")
         manager_prompt = "Coordinate a comprehensive investment analysis for Austin, TX properties under $400,000. Use all available tools and provide a detailed recommendation."
         manager_result = property_pilot.investment_manager(manager_prompt)
         print(f"✅ Investment Manager Agent responded")
-        print(f"   Response length: {len(manager_result.message)} characters")
-        print(f"   Sample response: {manager_result.message[:200]}...")
+        
+        # Handle different response types
+        if hasattr(manager_result, 'message'):
+            response_text = str(manager_result.message)
+        else:
+            response_text = str(manager_result)
+            
+        print(f"   Response length: {len(response_text)} characters")
+        if len(response_text) > 200:
+            print(f"   Sample response: {response_text[:200]}...")
+        else:
+            print(f"   Full response: {response_text}")
         
         return True
         
@@ -158,7 +204,11 @@ async def test_full_analysis():
         print(f"   Data Source: {analysis_result.get('data_source', 'Unknown')}")
         print(f"   Analysis Time: {analysis_result['timestamp']}")
         print(f"\n📋 Analysis Result Summary:")
-        print(f"   {analysis_result['analysis_result'][:300]}...")
+        result_text = str(analysis_result['analysis_result'])
+        if len(result_text) > 300:
+            print(f"   {result_text[:300]}...")
+        else:
+            print(f"   {result_text}")
         
         return True
         

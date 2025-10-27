@@ -40,8 +40,10 @@ logger = logging.getLogger(__name__)
 # Initialize AgentCore app with observability
 app = BedrockAgentCoreApp()
 
-# Initialize PropertyPilot system
+# Initialize PropertyPilot system with Gemini
+logger.info("Initializing PropertyPilot with Google Gemini 2.5 Pro...")
 property_pilot = PropertyPilotSystem()
+logger.info("PropertyPilot system initialized successfully")
 
 # Initialize Enhanced Web Research Agent
 web_research_agent = EnhancedWebResearchAgent()

@@ -67,3 +67,6 @@ python-jose[cryptography]>=3.3.0
 # Real Estate and Market Data APIs
 urllib3>=2.0.0
 requests>=2.31.0
+
+# Google AI Models
+google-genai>=1.46.0

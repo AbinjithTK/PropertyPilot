@@ -12,6 +12,7 @@ from dataclasses import dataclass
 
 from strands import Agent, tool
 from strands.models import BedrockModel
+from strands.models.gemini import GeminiModel
 from pydantic import BaseModel
 import boto3
 import pandas as pd
@@ -1015,20 +1016,44 @@ def get_market_trends(location: str) -> Dict:
 
 
 # Model Configuration
-def get_bedrock_model():
-    """Get configured Bedrock model with working inference profile"""
-    model_id = os.getenv("BEDROCK_MODEL_ID", "arn:aws:bedrock:us-east-1:476114109859:inference-profile/us.anthropic.claude-opus-4-20250514-v1:0")
-    return BedrockModel(
-        model_id=model_id,
-        region_name=os.getenv("AWS_REGION", "us-east-1"),
-        temperature=0.3
-    )
+def get_model():
+    """Get configured model based on MODEL_PROVIDER environment variable"""
+    provider = os.getenv("MODEL_PROVIDER", "gemini").lower()
+    
+    if provider == "gemini":
+        return GeminiModel(
+            client_args={
+                "api_key": os.getenv("GEMINI_API_KEY"),
+            },
+            model_id=os.getenv("GEMINI_MODEL_ID", "gemini-2.5-pro"),
+            params={
+                "temperature": 0.3,
+                "max_output_tokens": 4096,
+                "top_p": 0.9,
+                "top_k": 40
+            }
+        )
+    else:
+        # Fallback to Bedrock
+        model_id = os.getenv("BEDROCK_MODEL_ID", "arn:aws:bedrock:us-west-2:476114109859:inference-profile/us.anthropic.claude-opus-4-20250514-v1:0")
+        
+        session = boto3.Session(
+            aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+            aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+            region_name=os.getenv("AWS_REGION", "us-west-2")
+        )
+        
+        return BedrockModel(
+            model_id=model_id,
+            temperature=0.3,
+            boto_session=session
+        )
 
 # Agent Definitions
 def create_property_scout_agent() -> Agent:
     """Create Property Scout Agent for property discovery and data collection"""
     agent = Agent(
-        model=get_bedrock_model(),
+        model=get_model(),
         name="PropertyScout",
         tools=[scrape_zillow_listings, get_zillow_property_details, geocode_property, store_property_data]
     )
@@ -1068,7 +1093,7 @@ def create_property_scout_agent() -> Agent:
 def create_market_analyzer_agent() -> Agent:
     """Create Market Analyzer Agent for market research and valuation using real APIs"""
     agent = Agent(
-        model=get_bedrock_model(),
+        model=get_model(),
         name="MarketAnalyzer",
         tools=[get_demographic_data, analyze_comparable_sales, calculate_neighborhood_score, get_market_trends]
     )
@@ -1108,7 +1133,7 @@ def create_market_analyzer_agent() -> Agent:
 def create_deal_evaluator_agent() -> Agent:
     """Create Deal Evaluator Agent for financial analysis and ROI calculations"""
     agent = Agent(
-        model=get_bedrock_model(),
+        model=get_model(),
         name="DealEvaluator",
         tools=[calculate_roi, estimate_repair_costs, assess_investment_risk]
     )
@@ -1134,7 +1159,7 @@ def create_deal_evaluator_agent() -> Agent:
 def create_investment_manager_agent() -> Agent:
     """Create Investment Manager Agent for orchestration and portfolio management"""
     agent = Agent(
-        model=get_bedrock_model(),
+        model=get_model(),
         name="InvestmentManager",
         tools=[analyze_zillow_investment_opportunity, generate_investment_report, coordinate_agent_workflow]
     )

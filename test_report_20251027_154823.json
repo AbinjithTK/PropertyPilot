@@ -1,0 +1,72 @@
+{
+  "summary": {
+    "passed": 0,
+    "total": 10,
+    "success_rate": 0.0,
+    "duration": 6.609212,
+    "start_time": "2025-10-27T15:48:16.777839",
+    "end_time": "2025-10-27T15:48:23.387051"
+  },
+  "results": {
+    "tests/test_gemini_integration.py": {
+      "status": "FAILED",
+      "duration": 1.4984912872314453,
+      "error": "Traceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_gemini_integration.py\", line 124, in <module>\n    print(\"\\U0001f3e0 PropertyPilot Gemini Integration Test\")\n  File \"C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\U0001f3e0' in position 0: character maps to <undefined>\n",
+      "output": ""
+    },
+    "tests/test_strands_gemini.py": {
+      "status": "FAILED",
+      "duration": 1.8393290042877197,
+      "error": "Traceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_strands_gemini.py\", line 57, in <module>\n    test_strands_gemini()\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_strands_gemini.py\", line 13, in test_strands_gemini\n    print(\"\\U0001f916 Testing Strands Gemini Integration\")\n  File \"C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\U0001f916' in position 0: character maps to <undefined>\n",
+      "output": ""
+    },
+    "tests/test_tools_only.py": {
+      "status": "FAILED",
+      "duration": 0.06745576858520508,
+      "error": "Traceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_tools_only.py\", line 17, in <module>\n    from property_pilot_agents import (\nModuleNotFoundError: No module named 'property_pilot_agents'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_tools_only.py\", line 29, in <module>\n    print(f\"\\u274c Failed to import PropertyPilot tools: {e}\")\n  File \"C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u274c' in position 0: character maps to <undefined>\n",
+      "output": ""
+    },
+    "tests/test_agents_functionality.py": {
+      "status": "FAILED",
+      "duration": 0.16898417472839355,
+      "error": "Traceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_agents_functionality.py\", line 26, in <module>\n    from property_pilot_agents import (\nModuleNotFoundError: No module named 'property_pilot_agents'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_agents_functionality.py\", line 36, in <module>\n    print(f\"\\u274c Failed to import PropertyPilot components: {e}\")\n  File \"C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u274c' in position 0: character maps to <undefined>\n",
+      "output": ""
+    },
+    "tests/test_zillow_integration.py": {
+      "status": "FAILED",
+      "duration": 0.1545391082763672,
+      "error": "Traceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_zillow_integration.py\", line 9, in <module>\n    from property_pilot_agents import PropertyPilotSystem, zillow_client\nModuleNotFoundError: No module named 'property_pilot_agents'\n",
+      "output": ""
+    },
+    "tests/test_core_functionality.py": {
+      "status": "FAILED",
+      "duration": 0.15398263931274414,
+      "error": "Traceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_core_functionality.py\", line 6, in <module>\n    from automated_web_research import AutomatedWebResearcher\nModuleNotFoundError: No module named 'automated_web_research'\n",
+      "output": ""
+    },
+    "tests/test_automated_research.py": {
+      "status": "FAILED",
+      "duration": 0.15606188774108887,
+      "error": "Traceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_automated_research.py\", line 11, in <module>\n    from automated_web_research import AutomatedWebResearcher, EnhancedWebResearchAgent\nModuleNotFoundError: No module named 'automated_web_research'\n",
+      "output": ""
+    },
+    "tests/test_local_service.py": {
+      "status": "FAILED",
+      "duration": 0.25592541694641113,
+      "error": "Traceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_local_service.py\", line 55, in <module>\n    success = test_propertypilot_local()\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_local_service.py\", line 6, in test_propertypilot_local\n    print(\"\\U0001f3e0 Testing PropertyPilot Local Service\")\n  File \"C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\U0001f3e0' in position 0: character maps to <undefined>\n",
+      "output": ""
+    },
+    "tests/test_aws_setup.py": {
+      "status": "FAILED",
+      "duration": 0.333465576171875,
+      "error": "Traceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_aws_setup.py\", line 186, in <module>\n    main()\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_aws_setup.py\", line 129, in main\n    print(\"\\U0001f3e0 PropertyPilot AWS Bedrock Setup Test\")\n  File \"C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\U0001f3e0' in position 0: character maps to <undefined>\n",
+      "output": ""
+    },
+    "tests/test_agentcore_benefits.py": {
+      "status": "FAILED",
+      "duration": 0.4221622943878174,
+      "error": "Traceback (most recent call last):\n  File \"E:\\abin\\Codes\\devpost\\jums\\tests\\test_agentcore_benefits.py\", line 16, in <module>\n    from agentcore_deployment import AgentCoreDeploymentManager, AgentCoreConfig\nModuleNotFoundError: No module named 'agentcore_deployment'\n",
+      "output": ""
+    }
+  }
+}
