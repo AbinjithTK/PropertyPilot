@@ -231,8 +231,8 @@
     </div>
 
     <script>
-        // AgentCore endpoint - direct connection
-        const AGENTCORE_ENDPOINT = 'https://bedrock-agentcore.us-east-1.amazonaws.com/runtimes/PropertyPilotGeminiEnhanced-A9pB9q790m/invoke';
+        // AgentCore endpoint - via proxy for CORS
+        const AGENTCORE_ENDPOINT = 'http://localhost:5000/analyze';
         
         // Test connection on page load
         window.addEventListener('load', function() {
@@ -243,31 +243,25 @@
             const statusDiv = document.getElementById('connectionStatus');
             
             try {
-                // Simple test to see if we can reach the endpoint
-                const response = await fetch(AGENTCORE_ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        input: {
-                            prompt: "test connection",
-                            type: "enhanced_analysis",
-                            location: "test",
-                            max_price: 100000
-                        }
-                    })
+                // Test proxy connection
+                const response = await fetch('http://localhost:5000/test', {
+                    method: 'GET'
                 });
 
-                if (response.status === 200 || response.status === 400) {
-                    statusDiv.className = 'status connected';
-                    statusDiv.textContent = '✅ Connected to PropertyPilot AI Backend';
+                if (response.status === 200) {
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        statusDiv.className = 'status connected';
+                        statusDiv.textContent = '✅ Connected to PropertyPilot AI Backend';
+                    } else {
+                        throw new Error(result.message);
+                    }
                 } else {
                     throw new Error(`HTTP ${response.status}`);
                 }
             } catch (error) {
                 statusDiv.className = 'status disconnected';
-                statusDiv.textContent = '❌ Cannot connect to AI backend - Analysis may not work';
+                statusDiv.textContent = '❌ Start proxy server: python simple_proxy.py';
                 console.error('Connection test failed:', error);
             }
         }

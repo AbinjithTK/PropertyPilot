@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-10-27T17:39:56.622272",
-  "runtime_arn": "arn:aws:bedrock-agentcore:us-east-1:476114109859:runtime/PropertyPilotGeminiEnhanced-A9pB9q790m",
+  "timestamp": "2025-10-27T23:05:34.038311",
+  "runtime_arn": "arn:aws:bedrock-agentcore:us-east-1:476114109859:runtime/PropertyPilotGeminiEnhanced-X7HpvF97L6",
   "runtime_name": "PropertyPilotGeminiEnhanced",
   "image_uri": "476114109859.dkr.ecr.us-east-1.amazonaws.com/propertypilot-gemini-agentcore:latest",
   "role_arn": "arn:aws:iam::476114109859:role/PropertyPilotAgentCoreEnhancedRole",
