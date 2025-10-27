@@ -231,8 +231,8 @@
     </div>
 
     <script>
-        // AgentCore endpoint - via proxy for CORS
-        const AGENTCORE_ENDPOINT = 'http://localhost:5000/analyze';
+        // Direct API Gateway endpoint (no proxy needed)
+        const API_ENDPOINT = 'https://vw4wqyl3z0.execute-api.us-east-1.amazonaws.com/api/v1/analyze';
         
         // Test connection on page load
         window.addEventListener('load', function() {
@@ -243,26 +243,25 @@
             const statusDiv = document.getElementById('connectionStatus');
             
             try {
-                // Test proxy connection
-                const response = await fetch('http://localhost:5000/test', {
+                // Test direct API Gateway connection
+                const response = await fetch('https://vw4wqyl3z0.execute-api.us-east-1.amazonaws.com/health', {
                     method: 'GET'
                 });
 
                 if (response.status === 200) {
                     const result = await response.json();
-                    if (result.status === 'success') {
-                        statusDiv.className = 'status connected';
-                        statusDiv.textContent = '✅ Connected to PropertyPilot AI Backend';
-                    } else {
-                        throw new Error(result.message);
-                    }
+                    statusDiv.className = 'status connected';
+                    statusDiv.textContent = '✅ Connected to PropertyPilot AI (AWS AgentCore)';
                 } else {
                     throw new Error(`HTTP ${response.status}`);
                 }
             } catch (error) {
                 statusDiv.className = 'status disconnected';
-                statusDiv.textContent = '❌ Start proxy server: python simple_proxy.py';
+                statusDiv.textContent = '❌ Connecting to PropertyPilot AI Backend...';
                 console.error('Connection test failed:', error);
+                
+                // Retry connection after 2 seconds
+                setTimeout(testConnection, 2000);
             }
         }
 
@@ -340,18 +339,16 @@
 
             try {
                 const payload = {
-                    input: {
-                        prompt: query,
-                        type: analysisType,
-                        location: location,
-                        max_price: maxPrice,
-                        property_type: propertyType
-                    }
+                    query: query,
+                    analysis_type: analysisType,
+                    location: location,
+                    max_price: maxPrice,
+                    property_type: propertyType
                 };
 
                 console.log('Sending request to AgentCore:', payload);
 
-                const response = await fetch(AGENTCORE_ENDPOINT, {
+                const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -417,7 +414,7 @@
             
             results.className = 'results show';
             
-            const output = result.output || result;
+            const output = result.results || result.output || result;
             let html = '';
 
             // Main message
