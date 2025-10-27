@@ -647,7 +647,7 @@
 
     <script>
         // Configuration - PropertyPilot API endpoint
-        const API_ENDPOINT = 'https://vw4wqyl3z0.execute-api.us-east-1.amazonaws.com/api/v1/analyze';
+        const AGENTCORE_ENDPOINT = 'https://bedrock-agentcore.us-east-1.amazonaws.com/runtimes/PropertyPilotGeminiEnhanced-A9pB9q790m/invoke';
         
         // Global variables
         let selectedAnalysisType = 'enhanced_analysis';
@@ -748,17 +748,19 @@
 
             try {
                 const payload = {
-                    query: query,
-                    location: location,
-                    max_price: maxInvestment,
-                    property_type: propertyType,
-                    analysis_type: selectedAnalysisType,
-                    investment_strategy: 'buy_hold'
+                    input: {
+                        prompt: query,
+                        type: selectedAnalysisType,
+                        location: location,
+                        max_price: maxInvestment,
+                        property_type: propertyType,
+                        investment_strategy: 'buy_hold'
+                    }
                 };
 
                 console.log('Analyzing investment opportunity...');
 
-                const response = await fetch(API_ENDPOINT, {
+                const response = await fetch(AGENTCORE_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
